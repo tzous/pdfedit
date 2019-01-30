@@ -18,7 +18,7 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QScrollArea" name="listArea">
+       <widget class="QListWidget" name="listWidget">
         <property name="minimumSize">
          <size>
           <width>200</width>
@@ -31,19 +31,6 @@
           <height>16777215</height>
          </size>
         </property>
-        <property name="widgetResizable">
-         <bool>true</bool>
-        </property>
-        <widget class="QWidget" name="scrollAreaWidgetContents">
-         <property name="geometry">
-          <rect>
-           <x>0</x>
-           <y>0</y>
-           <width>198</width>
-           <height>499</height>
-          </rect>
-         </property>
-        </widget>
        </widget>
       </item>
       <item>
@@ -161,7 +148,7 @@
   </widget>
   <action name="actionOpen">
    <property name="icon">
-    <iconset resource="PdfRes.qrc">
+    <iconset>
      <normaloff>:/res/res/preview.png</normaloff>:/res/res/preview.png</iconset>
    </property>
    <property name="text">
@@ -170,7 +157,7 @@
   </action>
   <action name="actionSave">
    <property name="icon">
-    <iconset resource="PdfRes.qrc">
+    <iconset>
      <normaloff>:/res/res/save.png</normaloff>:/res/res/save.png</iconset>
    </property>
    <property name="text">
@@ -179,7 +166,7 @@
   </action>
   <action name="actionSaveAs">
    <property name="icon">
-    <iconset resource="PdfRes.qrc">
+    <iconset>
      <normaloff>:/res/res/picturetopgallery.png</normaloff>:/res/res/picturetopgallery.png</iconset>
    </property>
    <property name="text">
@@ -188,7 +175,7 @@
   </action>
   <action name="actionPrint">
    <property name="icon">
-    <iconset resource="PdfRes.qrc">
+    <iconset>
      <normaloff>:/res/res/print.png</normaloff>:/res/res/print.png</iconset>
    </property>
    <property name="text">
@@ -197,7 +184,7 @@
   </action>
   <action name="actionClose">
    <property name="icon">
-    <iconset resource="PdfRes.qrc">
+    <iconset>
      <normaloff>:/res/res/delete.png</normaloff>:/res/res/delete.png</iconset>
    </property>
    <property name="text">
@@ -206,7 +193,7 @@
   </action>
   <action name="actionQuit">
    <property name="icon">
-    <iconset resource="PdfRes.qrc">
+    <iconset>
      <normaloff>:/res/res/exit.png</normaloff>:/res/res/exit.png</iconset>
    </property>
    <property name="text">
@@ -215,7 +202,7 @@
   </action>
   <action name="actionAppend">
    <property name="icon">
-    <iconset resource="PdfRes.qrc">
+    <iconset>
      <normaloff>:/res/res/add.png</normaloff>:/res/res/add.png</iconset>
    </property>
    <property name="text">
@@ -224,7 +211,7 @@
   </action>
   <action name="actionDelete">
    <property name="icon">
-    <iconset resource="PdfRes.qrc">
+    <iconset>
      <normaloff>:/res/res/del.png</normaloff>:/res/res/del.png</iconset>
    </property>
    <property name="text">
@@ -233,7 +220,7 @@
   </action>
   <action name="actionExtract">
    <property name="icon">
-    <iconset resource="PdfRes.qrc">
+    <iconset>
      <normaloff>:/res/res/forward.png</normaloff>:/res/res/forward.png</iconset>
    </property>
    <property name="text">
@@ -242,7 +229,7 @@
   </action>
   <action name="actionMove">
    <property name="icon">
-    <iconset resource="PdfRes.qrc">
+    <iconset>
      <normaloff>:/res/res/sort.png</normaloff>:/res/res/sort.png</iconset>
    </property>
    <property name="text">
@@ -251,7 +238,7 @@
   </action>
   <action name="actionHelp">
    <property name="icon">
-    <iconset resource="PdfRes.qrc">
+    <iconset>
      <normaloff>:/res/res/info.png</normaloff>:/res/res/info.png</iconset>
    </property>
    <property name="text">
@@ -260,7 +247,7 @@
   </action>
   <action name="actionAbout">
    <property name="icon">
-    <iconset resource="PdfRes.qrc">
+    <iconset>
      <normaloff>:/res/res/font.png</normaloff>:/res/res/font.png</iconset>
    </property>
    <property name="text">
@@ -269,7 +256,7 @@
   </action>
   <action name="actionCopy">
    <property name="icon">
-    <iconset resource="PdfRes.qrc">
+    <iconset>
      <normaloff>:/res/res/copy.png</normaloff>:/res/res/copy.png</iconset>
    </property>
    <property name="text">
@@ -278,7 +265,7 @@
   </action>
   <action name="actionRotate">
    <property name="icon">
-    <iconset resource="PdfRes.qrc">
+    <iconset>
      <normaloff>:/res/res/convert.png</normaloff>:/res/res/convert.png</iconset>
    </property>
    <property name="text">
@@ -287,7 +274,7 @@
   </action>
   <action name="actionPicToPdf">
    <property name="icon">
-    <iconset resource="PdfRes.qrc">
+    <iconset>
      <normaloff>:/res/res/address.png</normaloff>:/res/res/address.png</iconset>
    </property>
    <property name="text">
@@ -296,7 +283,7 @@
   </action>
   <action name="actionMerge">
    <property name="icon">
-    <iconset resource="PdfRes.qrc">
+    <iconset>
      <normaloff>:/res/res/custom.png</normaloff>:/res/res/custom.png</iconset>
    </property>
    <property name="text">

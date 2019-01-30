@@ -22,4 +22,4 @@ class ShowImageWidget(QLabel):
                 if width > 200:
                     width = int(width * 0.95)
                     height = int(height * 0.95)
-            self.setPixmap(pix.scaled(QSize(width,height)))
+            self.setPixmap(pix.scaled(QSize(width, height)))
