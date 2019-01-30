@@ -37,6 +37,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.set_menu_status()  # 初始化菜单项状态
         self.initEventPlot()  # 初始化事件
 
+        self.listWidget.setViewMode(QListWidget.IconMode)
+        self.listWidget.setIconSize(self.IMAGE_SIZE)  # Icon 大小
+        self.listWidget.setMovement(QListView.Static)  # Listview显示状态
+        self.listWidget.setSpacing(12)  # 间距大小
+
     # 设置菜单项状态
     def set_menu_status(self):
         if self.bOpened:
@@ -50,7 +55,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.actionMove.setEnabled(True)
             self.actionDelete.setEnabled(True)
             self.actionRotate.setEnabled(True)
-            self.listArea.setVisible(True)
+            self.listWidget.setVisible(True)
             self.showArea.setVisible(True)
         else:
             self.actionSave.setEnabled(False)
@@ -63,7 +68,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.actionMove.setEnabled(False)
             self.actionDelete.setEnabled(False)
             self.actionRotate.setEnabled(False)
-            self.listArea.setVisible(False)
+            self.listWidget.setVisible(False)
             self.showArea.setVisible(False)
 
     # 初始化事件
@@ -76,11 +81,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         pdfName, pdfType = QFileDialog.getOpenFileName(self, "打开pdf文件", "", "*.pdf")
         if pdfName:
             self.docDoc = fitz.open(pdfName)
-            widget = QWidget(self)
-            vboxLayout = QVBoxLayout()
             self.nPages = self.docDoc.pageCount
+            #vshowLayout = QVBoxLayout()
+            #showwidget = QWidget(self)
             for i in range(0, self.nPages):
-                label = QLabel(self)
                 page = self.docDoc[i]
                 zoom = int(100)
                 rotate = int(0)
@@ -88,10 +92,28 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 pix = page.getPixmap(matrix=trans, alpha=False)
                 fmt = QImage.Format_RGBA8888 if pix.alpha else QImage.Format_RGB888
                 qtimg = QImage(pix.samples, pix.width, pix.height, pix.stride, fmt)
-                label.setPixmap(QPixmap.fromImage(qtimg).scaled(self.IMAGE_SIZE))
-                vboxLayout.addWidget(label)
-            widget.setLayout(vboxLayout)
-            self.listArea.setWidget(widget)
+                widget = QWidget(self)
+                vboxLayout = QVBoxLayout()
+                widget.setLayout(vboxLayout)
+                listItem = QListWidgetItem(self.listWidget)
+                listItem.setSizeHint(QSize(200, 280))
+                labelimg = QLabel(widget)
+                labelimg.setPixmap(QPixmap.fromImage(qtimg).scaled(self.IMAGE_SIZE))
+                labelimg.setAlignment(Qt.AlignBottom | Qt.AlignHCenter)
+                labeltxt = QLabel(widget)
+                labeltxt.setWindowTitle("%d" % i)
+                labeltxt.setFixedHeight(30)
+                labeltxt.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
+                labeltxt.setWordWrap(True)
+                vboxLayout.addWidget(labelimg)
+                vboxLayout.addWidget(labeltxt)
+
+                #vshowLayout.addWidget(labelimg)
+
+                self.listWidget.setItemWidget(listItem, widget)
+            #showwidget.setLayout(vshowLayout)
+            #self.showArea.setWidget(showwidget)
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
