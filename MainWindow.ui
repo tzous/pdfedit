@@ -148,97 +148,127 @@
   </widget>
   <action name="actionOpen">
    <property name="icon">
-    <iconset>
+    <iconset resource="PdfRes.qrc">
      <normaloff>:/res/res/preview.png</normaloff>:/res/res/preview.png</iconset>
    </property>
    <property name="text">
     <string>打开...</string>
    </property>
+   <property name="toolTip">
+    <string>打开pdf文档</string>
+   </property>
   </action>
   <action name="actionSave">
    <property name="icon">
-    <iconset>
+    <iconset resource="PdfRes.qrc">
      <normaloff>:/res/res/save.png</normaloff>:/res/res/save.png</iconset>
    </property>
    <property name="text">
     <string>保存</string>
    </property>
+   <property name="toolTip">
+    <string>保存当前pdf文档</string>
+   </property>
   </action>
   <action name="actionSaveAs">
    <property name="icon">
-    <iconset>
+    <iconset resource="PdfRes.qrc">
      <normaloff>:/res/res/picturetopgallery.png</normaloff>:/res/res/picturetopgallery.png</iconset>
    </property>
    <property name="text">
     <string>另存为...</string>
    </property>
+   <property name="toolTip">
+    <string>pdf文档另存为其他文件名</string>
+   </property>
   </action>
   <action name="actionPrint">
    <property name="icon">
-    <iconset>
+    <iconset resource="PdfRes.qrc">
      <normaloff>:/res/res/print.png</normaloff>:/res/res/print.png</iconset>
    </property>
    <property name="text">
     <string>打印</string>
    </property>
+   <property name="toolTip">
+    <string>打印当前pdf文档</string>
+   </property>
   </action>
   <action name="actionClose">
    <property name="icon">
-    <iconset>
+    <iconset resource="PdfRes.qrc">
      <normaloff>:/res/res/delete.png</normaloff>:/res/res/delete.png</iconset>
    </property>
    <property name="text">
     <string>关闭</string>
    </property>
+   <property name="toolTip">
+    <string>关闭pdf文档</string>
+   </property>
   </action>
   <action name="actionQuit">
    <property name="icon">
-    <iconset>
+    <iconset resource="PdfRes.qrc">
      <normaloff>:/res/res/exit.png</normaloff>:/res/res/exit.png</iconset>
    </property>
    <property name="text">
     <string>退出</string>
    </property>
+   <property name="toolTip">
+    <string>退出系统</string>
+   </property>
   </action>
   <action name="actionAppend">
    <property name="icon">
-    <iconset>
+    <iconset resource="PdfRes.qrc">
      <normaloff>:/res/res/add.png</normaloff>:/res/res/add.png</iconset>
    </property>
    <property name="text">
     <string>追加</string>
    </property>
+   <property name="toolTip">
+    <string>追加一个pdf文档或图片到当前文档</string>
+   </property>
   </action>
   <action name="actionDelete">
    <property name="icon">
-    <iconset>
+    <iconset resource="PdfRes.qrc">
      <normaloff>:/res/res/del.png</normaloff>:/res/res/del.png</iconset>
    </property>
    <property name="text">
     <string>删除</string>
    </property>
+   <property name="toolTip">
+    <string>删除当前页面</string>
+   </property>
   </action>
   <action name="actionExtract">
    <property name="icon">
-    <iconset>
+    <iconset resource="PdfRes.qrc">
      <normaloff>:/res/res/forward.png</normaloff>:/res/res/forward.png</iconset>
    </property>
    <property name="text">
     <string>导出</string>
    </property>
+   <property name="toolTip">
+    <string>导出部分或全部页面为pdf文档或图片</string>
+   </property>
   </action>
   <action name="actionMove">
    <property name="icon">
-    <iconset>
+    <iconset resource="PdfRes.qrc">
      <normaloff>:/res/res/sort.png</normaloff>:/res/res/sort.png</iconset>
    </property>
    <property name="text">
     <string>移动</string>
    </property>
+   <property name="toolTip">
+    <string>当前页面移动到其他位置</string>
+   </property>
   </action>
   <action name="actionHelp">
    <property name="icon">
-    <iconset>
+    <iconset resource="PdfRes.qrc">
      <normaloff>:/res/res/info.png</normaloff>:/res/res/info.png</iconset>
    </property>
    <property name="text">
@@ -247,7 +277,7 @@
   </action>
   <action name="actionAbout">
    <property name="icon">
-    <iconset>
+    <iconset resource="PdfRes.qrc">
      <normaloff>:/res/res/font.png</normaloff>:/res/res/font.png</iconset>
    </property>
    <property name="text">
@@ -256,38 +286,50 @@
   </action>
   <action name="actionCopy">
    <property name="icon">
-    <iconset>
+    <iconset resource="PdfRes.qrc">
      <normaloff>:/res/res/copy.png</normaloff>:/res/res/copy.png</iconset>
    </property>
    <property name="text">
     <string>拷贝</string>
    </property>
+   <property name="toolTip">
+    <string>拷贝当前页面到剪贴板</string>
+   </property>
   </action>
   <action name="actionRotate">
    <property name="icon">
-    <iconset>
+    <iconset resource="PdfRes.qrc">
      <normaloff>:/res/res/convert.png</normaloff>:/res/res/convert.png</iconset>
    </property>
    <property name="text">
     <string>旋转</string>
    </property>
+   <property name="toolTip">
+    <string>当前旋转90度</string>
+   </property>
   </action>
   <action name="actionPicToPdf">
    <property name="icon">
-    <iconset>
+    <iconset resource="PdfRes.qrc">
      <normaloff>:/res/res/address.png</normaloff>:/res/res/address.png</iconset>
    </property>
    <property name="text">
     <string>图片转PDF</string>
    </property>
+   <property name="toolTip">
+    <string>图片转PDF工具</string>
+   </property>
   </action>
   <action name="actionMerge">
    <property name="icon">
-    <iconset>
+    <iconset resource="PdfRes.qrc">
      <normaloff>:/res/res/custom.png</normaloff>:/res/res/custom.png</iconset>
    </property>
    <property name="text">
     <string>合并PDF</string>
+   </property>
+   <property name="toolTip">
+    <string>合并多个PDF</string>
    </property>
   </action>
  </widget>
