@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="res">
+    <file>res/arrowleft.png</file>
+    <file>res/arrowright.png</file>
     <file>res/abottom.png</file>
     <file>res/add.png</file>
     <file>res/add1.png</file>

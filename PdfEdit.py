@@ -34,6 +34,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.nCurr = -1      # 当前文档页码
         self.docDoc = None      # 当前pymupdf文档对象
         self.bModified = False    #是否已编辑过
+        self.bShrink = False      # 列表框收缩标志
         self.nMaxPages = 32   # 最大显示页数
         self.IMAGE_SIZE = QSize(147, 208)  # A4纸210*297, 乘0.7
         self.LISTITEM_SIZE = QSize(160, 250)
@@ -58,6 +59,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.labelFileName.setMinimumWidth(500)
         self.statusbar.addWidget(self.labelFileName)
         self.statusbar.addWidget(self.labelPageInfo)
+        # listWidget右键菜单
+        self.listWidget.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.listWidget.customContextMenuRequested.connect(self.showContextMenu)
+        self.contextMenu = QMenu(self)  # 模板右键菜单
+        self.contextactionCopy = self.contextMenu.addAction('拷贝')
+        self.contextactionExport = self.contextMenu.addAction('导出')
+        self.contextactionRolate = self.contextMenu.addAction('旋转')
+        self.contextMenu.addSeparator()
+        self.contextactionDelete = self.contextMenu.addAction('删除')
+        self.contextactionDelete.triggered.connect(self.onclicked_actionDelete)
+        self.contextactionCopy.triggered.connect(self.onclicked_actionCopy)
+
 
     # 设置窗口菜单控件状态
     def set_window_status(self):
@@ -71,8 +84,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.actionMove.setEnabled(True)
             self.actionDelete.setEnabled(True)
             self.actionRotate.setEnabled(True)
-            self.listWidget.setVisible(True)
+            self.btnShrink.setVisible(True)
             self.showArea.setVisible(True)
+            self.listWidget.setVisible(True)
+            if self.bShrink:
+                self.widget.setFixedWidth(36)
+            else:
+                self.widget.setFixedWidth(200)
             if self.bModified:
                 self.actionSave.setEnabled(True)
             else:
@@ -88,6 +106,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.actionMove.setEnabled(False)
             self.actionDelete.setEnabled(False)
             self.actionRotate.setEnabled(False)
+            self.btnShrink.setVisible(False)
             self.listWidget.setVisible(False)
             self.showArea.setVisible(False)
             self.labelFileName.setText("")  # 状态栏上的文件名
@@ -105,6 +124,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.actionSaveAs.triggered.connect(self.onclicked_actionSaveAs)
         # 删除当前页
         self.actionDelete.triggered.connect(self.onclicked_actionDelete)
+        # 拷贝当前页到剪贴板
+        self.actionCopy.triggered.connect(self.onclicked_actionCopy)
+        # 在当前页面后追加pdf文档
+        self.actionAppend.triggered.connect(self.onclicked_actionAppend)
+        # 列表框收缩
+        self.btnShrink.clicked.connect(self.onclicked_btnShrink)
 
         # 缩略图列表控件单击事件
         self.listWidget.clicked.connect(self.onclicked_listWidget)
@@ -132,7 +157,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             return
         for i in range(0, self.nPages):
             page = self.docDoc[i]  # 当前页
-            zoom = int(100)
+            zoom = int(200)
             rotate = int(0)
             trans = fitz.Matrix(zoom / 100.0, zoom / 100.0).preRotate(rotate)
             pix = page.getPixmap(matrix=trans, alpha=False)
@@ -171,7 +196,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # 得到当前页
         page = self.docDoc[self.nCurr]
-        zoom = int(100)
+        zoom = int(200)
         rotate = int(0)
         trans = fitz.Matrix(zoom / 100.0, zoom / 100.0).preRotate(rotate)
         pix = page.getPixmap(matrix=trans, alpha=False)
@@ -235,7 +260,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if not self.bOpened or self.nPages <= 0 or self.nCurr < 0:
             return
         if self.nPages == 1:
-            QMessageBox.information(self, "Question", "最后一页，不能删除！", QMessageBox.Ok)
+            QMessageBox.information(self, "Information", "最后一页，不能删除！", QMessageBox.Ok)
             return
         ret = QMessageBox.information(self, "Question", "是否删除当前页？", QMessageBox.Yes|QMessageBox.No )
         if ret != QMessageBox.Yes:
@@ -255,6 +280,50 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.set_window_status()
         # 更新状态栏页码
         self.labelPageInfo.setText("第 %d 页/共 %d 页" % (int(self.nCurr + 1), self.nPages))
+
+    # 列表控件右键事件
+    def showContextMenu(self, ev):
+        item = self.listWidget.currentItem()
+        self.nCurr = self.listWidget.row(item)     # 得到当前项序号
+        self.show_current_page()
+        pos = QCursor.pos()  # 使用当前鼠标位置，相对于屏幕的QPoint对象
+        self.contextMenu.exec_(pos)  # 在当前模板名称位置显示
+
+    # 拷贝当前页到剪贴板
+    def onclicked_actionCopy(self):
+        clipboard = QApplication.clipboard()
+        page = self.docDoc[self.nCurr]
+        zoom = int(200)
+        rotate = int(0)
+        trans = fitz.Matrix(zoom / 100.0, zoom / 100.0).preRotate(rotate)
+        pix = page.getPixmap(matrix=trans, alpha=False)
+        fmt = QImage.Format_RGBA8888 if pix.alpha else QImage.Format_RGB888
+        qtimg = QImage(pix.samples, pix.width, pix.height, pix.stride, fmt) # 当前页转换为QImage对象
+        clipboard.setPixmap(QPixmap.fromImage(qtimg).scaled(QSize(pix.width, pix.height)))
+        QMessageBox.information(self, "Information", "当前页已拷贝到系统剪贴板", QMessageBox.Ok)
+
+    # 在当前页面后追加pdf文档
+    def onclicked_actionAppend(self):
+        pdf2, pdfType = QFileDialog.getOpenFileName(self, "打开pdf文件", "", "*.pdf")
+        if pdf2:
+            doc2 = fitz.open(pdf2)
+            self.docDoc.insertPDF(doc2, from_page = 0, to_page = doc2.pageCount - 1, start_at = self.nCurr + 1)
+            self.refresh_listWidget()
+
+    # 列表框收缩
+    def onclicked_btnShrink(self):
+        icon = QIcon()
+        if self.bShrink:
+            self.widget.setFixedWidth(200)
+            self.bShrink = False
+            icon.addPixmap(QPixmap(":/res/res/arrowleft.png"), QIcon.Normal, QIcon.Off)
+        else:
+            self.widget.setFixedWidth(36)
+            self.bShrink = True
+            icon.addPixmap(QPixmap(":/res/res/arrowright.png"), QIcon.Normal, QIcon.Off)
+        self.btnShrink.setIcon(icon)
+
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
