@@ -18,19 +18,72 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QListWidget" name="listWidget">
+       <widget class="QWidget" name="widget" native="true">
         <property name="minimumSize">
          <size>
-          <width>200</width>
+          <width>0</width>
           <height>0</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>200</width>
+          <width>210</width>
           <height>16777215</height>
          </size>
         </property>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <property name="sizeConstraint">
+          <enum>QLayout::SetDefaultConstraint</enum>
+         </property>
+         <item>
+          <widget class="QToolButton" name="btnShrink">
+           <property name="minimumSize">
+            <size>
+             <width>16</width>
+             <height>16</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16</width>
+             <height>16</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="icon">
+            <iconset resource="PdfRes.qrc">
+             <normaloff>:/res/res/arrowleft.png</normaloff>:/res/res/arrowleft.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>16</width>
+             <height>16</height>
+            </size>
+           </property>
+           <property name="autoRaise">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QListWidget" name="listWidget">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>16777215</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </item>
       <item>
@@ -43,7 +96,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>572</width>
+           <width>562</width>
            <height>499</height>
           </rect>
          </property>
@@ -101,10 +154,10 @@
    </widget>
    <widget class="QMenu" name="menu_4">
     <property name="title">
-     <string>转换</string>
+     <string>工具</string>
     </property>
     <addaction name="actionPicToPdf"/>
-    <addaction name="actionMerge"/>
+    <addaction name="actionFileSize"/>
    </widget>
    <addaction name="menu"/>
    <addaction name="menu_2"/>
@@ -141,7 +194,7 @@
    <addaction name="actionDelete"/>
    <addaction name="separator"/>
    <addaction name="actionPicToPdf"/>
-   <addaction name="actionMerge"/>
+   <addaction name="actionFileSize"/>
    <addaction name="separator"/>
    <addaction name="actionHelp"/>
    <addaction name="actionAbout"/>
@@ -227,7 +280,7 @@
     <string>追加</string>
    </property>
    <property name="toolTip">
-    <string>追加一个pdf文档或图片到当前文档</string>
+    <string>追加一个pdf文档到当前文档</string>
    </property>
   </action>
   <action name="actionDelete">
@@ -320,16 +373,13 @@
     <string>图片转PDF工具</string>
    </property>
   </action>
-  <action name="actionMerge">
+  <action name="actionFileSize">
    <property name="icon">
     <iconset resource="PdfRes.qrc">
      <normaloff>:/res/res/custom.png</normaloff>:/res/res/custom.png</iconset>
    </property>
    <property name="text">
-    <string>合并PDF</string>
-   </property>
-   <property name="toolTip">
-    <string>合并多个PDF</string>
+    <string>减少文件大小</string>
    </property>
   </action>
  </widget>
