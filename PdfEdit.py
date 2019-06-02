@@ -13,10 +13,15 @@ import fitz
 
 import six
 
+import win32api
+import win32print
+
 
 from Ui_MainWindow import Ui_MainWindow   # 主窗口
 from ShowImageWidget import ShowImageWidget   # 显示图片控件
-
+from dlgfromto import dlgfromto
+from dlgto import dlgto
+from about import About
 
 class MainWindow(QMainWindow, Ui_MainWindow):
 
@@ -65,11 +70,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.contextMenu = QMenu(self)  # 模板右键菜单
         self.contextactionCopy = self.contextMenu.addAction('拷贝')
         self.contextactionExport = self.contextMenu.addAction('导出')
-        self.contextactionRolate = self.contextMenu.addAction('旋转')
+        self.contextactionMove = self.contextMenu.addAction('移动')
         self.contextMenu.addSeparator()
         self.contextactionDelete = self.contextMenu.addAction('删除')
         self.contextactionDelete.triggered.connect(self.onclicked_actionDelete)
         self.contextactionCopy.triggered.connect(self.onclicked_actionCopy)
+        self.contextactionExport.triggered.connect(self.onclicked_actionExtract)
+        self.contextactionMove.triggered.connect(self.onclicked_actionMove)
 
 
     # 设置窗口菜单控件状态
@@ -130,9 +137,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.actionAppend.triggered.connect(self.onclicked_actionAppend)
         # 列表框收缩
         self.btnShrink.clicked.connect(self.onclicked_btnShrink)
-
+        # 导出当前页面
+        self.actionExtract.triggered.connect(self.onclicked_actionExtract)
+        # 移动当前页面
+        self.actionMove.triggered.connect(self.onclicked_actionMove)
         # 缩略图列表控件单击事件
         self.listWidget.clicked.connect(self.onclicked_listWidget)
+        # 打印pdf文档
+        self.actionPrint.triggered.connect(self.onclicked_actionPrint)
+        # 关于
+        self.actionAbout.triggered.connect(self.onclicked_actionAbout)
+
 
     # 打开文件
     def onclicked_actionOpen(self):
@@ -141,7 +156,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.docDoc = fitz.open(self.pdfName)
             self.bOpened = True  # 设置文件打开
             self.labelFileName.setText(self.pdfName)
-            self.set_window_status()  # 激活窗口控件
             self.refresh_listWidget()
             # 显示第一页
             self.nCurr = 0
@@ -151,6 +165,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def refresh_listWidget(self):
         if not self.bOpened:
             return
+        self.set_window_status()    # 刷新菜单状态
         self.listWidget.clear()
         self.nPages = self.docDoc.pageCount
         if self.nPages <= 0:
@@ -252,8 +267,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         newfileName, ok = QFileDialog.getSaveFileName(self, "文件另存为", filePath, "*.pdf")
         if newfileName:
             self.docDoc.save(newfileName)
+            #先关闭当前文档
+            self.bOpened = False  # 文档是否打开
+            self.bModified = False
+            self.pdfName = None  # 文档名
+            self.nPages = 0  # 文档总页数
+            self.nCurr = -1  # 当前文档页码
+            self.docDoc = None  # 当前pymupdf文档对象
+            #再打开新文档
             self.pdfName = newfileName
             self.labelFileName.setText(self.pdfName)
+            self.docDoc = fitz.open(self.pdfName)
+            self.bOpened = True  # 设置文件打开
+            self.refresh_listWidget()
+            # 显示第一页
+            self.nCurr = 0
+            self.show_current_page()
 
     # 删除当前页
     def onclicked_actionDelete(self):
@@ -308,6 +337,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if pdf2:
             doc2 = fitz.open(pdf2)
             self.docDoc.insertPDF(doc2, from_page = 0, to_page = doc2.pageCount - 1, start_at = self.nCurr + 1)
+            self.bModified = True
             self.refresh_listWidget()
 
     # 列表框收缩
@@ -323,7 +353,68 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             icon.addPixmap(QPixmap(":/res/res/arrowright.png"), QIcon.Normal, QIcon.Off)
         self.btnShrink.setIcon(icon)
 
+    # 导出页面
+    def onclicked_actionExtract(self):
+        dlg = dlgfromto()
+        if dlg.exec_():
+            ifrom = int(dlg.lineEdit.text()) - 1
+            ito = int(dlg.lineEdit_2.text()) - 1
+            if ifrom < 0:
+                ifrom = 0
+            if ito > self.nPages:
+                ito = self.nPages
+            if ito < ifrom:
+                imid = ifrom
+                ifrom = ito
+                ito = imid
+            filePath, fname = os.path.split(os.path.abspath(self.pdfName))
+            newfileName, ok = QFileDialog.getSaveFileName(self, "导出文件名为", filePath, "*.pdf")
+            if newfileName:
+                doc2 = fitz.open()                 # new empty PDF
+                doc2.insertPDF(self.docDoc, from_page=ifrom, to_page=ito)
+                doc2.save(newfileName)
 
+    # 移动当前页面
+    def onclicked_actionMove(self):
+        dlg = dlgto()
+        if dlg.exec_():
+            ito = int(dlg.lineEdit.text())
+            if ito < 0:
+                ito = 0
+            if ito >= self.nPages:
+                ito = -1
+            if ito == self.nCurr + 1:
+                return
+
+            self.docDoc.movePage(self.nCurr, to=ito)
+            self.bModified = True
+            self.refresh_listWidget()
+
+    # 打印pdf文档
+    def onclicked_actionPrint(self):
+        if not self.bOpened :
+            return
+        if self.bModified:
+            QMessageBox.information(self, "Information", "已修改，请先保存", QMessageBox.Ok)
+            return
+
+        win32api.ShellExecute(
+            0,
+            "print",
+            self.pdfName,
+            #
+            # If this is None, the default printer will
+            # be used anyway.
+            #
+            '/d:"%s"' % win32print.GetDefaultPrinter(),
+            ".",
+            0
+        )
+
+    # 关于
+    def onclicked_actionAbout(self):
+        dlg = About()
+        dlg.exec_()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
