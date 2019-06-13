@@ -145,6 +145,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.listWidget.clicked.connect(self.onclicked_listWidget)
         # 打印pdf文档
         self.actionPrint.triggered.connect(self.onclicked_actionPrint)
+        # 图片转PDF
+        self.actionPicToPdf.triggered.connect(self.onclicked_actioPicToPdf)
+        # PDF转图片
+        self.actionPdfToPic.triggered.connect(self.onclicked_actionPdfToPic)
         # 关于
         self.actionAbout.triggered.connect(self.onclicked_actionAbout)
 
@@ -410,6 +414,60 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             ".",
             0
         )
+
+    # 图片转PDF
+    def onclicked_actioPicToPdf(self):
+        if self.bOpened:                   # 先关闭当前文档
+            self.onclicked_actionClose()
+
+        picfiles, picType = QFileDialog.getOpenFileNames(self, "请选择图片文件", "", \
+                        "All Files (*);;JPG Files (*.jpg);;BMP Files (*.bmp);;PNG Files (*.png)")
+
+        if len(picfiles) == 0:
+            return
+        doc = fitz.open()  # new empty PDF
+
+        for pic in picfiles:
+            img = fitz.open(pic)  # open pic as document
+            rect = img[0].rect  # pic dimension
+            pdfbytes = img.convertToPDF()  # make a PDF stream
+            img.close()  # no longer needed
+            imgPDF = fitz.open("pdf", pdfbytes)  # open stream as PDF
+            page = doc.newPage(width=rect.width,  # new page with ...
+                               height=rect.height)  # pic dimension
+            page.showPDFpage(rect, imgPDF, 0)  # image fills the page
+
+        newfileName, ok = QFileDialog.getSaveFileName(self, "导出文件名为", "", "*.pdf")
+        if newfileName:
+            doc.save(newfileName)    #先保存
+            self.pdfName = newfileName    #再打开
+            self.docDoc = fitz.open(self.pdfName)
+            self.bOpened = True  # 设置文件打开
+            self.labelFileName.setText(self.pdfName)
+            self.refresh_listWidget()
+            # 显示第一页
+            self.nCurr = 0
+            self.show_current_page()
+
+    # PDF转图片
+    def onclicked_actionPdfToPic(self):
+        if not self.bOpened:                   # 没有打开文档
+            self.onclicked_actionOpen()
+        if self.nPages <= 0:
+            return
+
+        picNames, ok = QFileDialog.getSaveFileName(self, "导出文件名为", "", "*.jpg")
+
+        if picNames:
+            picName, ext = os.path.splitext(picNames)
+            for page in self.docDoc:  # iterate through the pages
+                zoom = int(100)
+                rotate = int(0)
+                trans = fitz.Matrix(zoom / 100.0, zoom / 100.0).preRotate(rotate)
+                pix = page.getPixmap(matrix=trans, alpha=False)  # render page to an image
+                #pix.writePNG("%s-%i.png" % (picName, page.number))  # store image as a PNG
+                pix.writeImage("%s-%i.jpg" % (picName, page.number))
+
 
     # 关于
     def onclicked_actionAbout(self):
