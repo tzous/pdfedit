@@ -176,7 +176,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             return
         for i in range(0, self.nPages):
             page = self.docDoc[i]  # 当前页
-            zoom = int(200)
+            zoom = int(30)
             rotate = int(0)
             trans = fitz.Matrix(zoom / 100.0, zoom / 100.0).preRotate(rotate)
             pix = page.getPixmap(matrix=trans, alpha=False)
