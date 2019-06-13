@@ -51,6 +51,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.set_window_status()  # 设置窗口视图状态
         self.init_event_plot()  # 初始化事件
 
+        # 处理命令行参数
+        if len(sys.argv) > 1:
+            self.pdfName = sys.argv[1]
+            if self.pdfName:
+                self.open_doc()
+
     # 初始化相关控件
     def initUi(self):
         # 初始化listWidget
@@ -152,10 +158,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # 关于
         self.actionAbout.triggered.connect(self.onclicked_actionAbout)
 
-
-    # 打开文件
-    def onclicked_actionOpen(self):
-        self.pdfName, pdfType = QFileDialog.getOpenFileName(self, "打开pdf文件", "", "*.pdf")
+    # 打开文档处理
+    def open_doc(self):
         if self.pdfName:
             self.docDoc = fitz.open(self.pdfName)
             self.bOpened = True  # 设置文件打开
@@ -164,6 +168,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             # 显示第一页
             self.nCurr = 0
             self.show_current_page()
+
+    # 打开文件
+    def onclicked_actionOpen(self):
+        self.pdfName, pdfType = QFileDialog.getOpenFileName(self, "打开pdf文件", "", "*.pdf")
+        if self.pdfName:
+            self.open_doc()
 
     # 刷新listWidget
     def refresh_listWidget(self):
